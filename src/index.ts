@@ -1,6 +1,7 @@
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 import { exit } from 'process';
+import { headers, baseUrl } from './config';
 
 interface Parameters {
   nameOfArticle: string;
@@ -99,10 +100,7 @@ const crawl = async (
   }
 
   const response = await fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-    },
+    headers,
   });
   const html = await response.text();
   const links = getLinks(html, firstLinksFollowed);
@@ -125,9 +123,8 @@ const main = async () => {
   try {
     const { nameOfArticle, depthOfLinks, firstLinksFollowed } =
       parseParameters();
+    const startUrl = `${baseUrl}wiki/${nameOfArticle}`;
 
-    const baseUrl = 'https://en.wikipedia.org';
-    const startUrl = `https://en.wikipedia.org/wiki/${nameOfArticle}`;
     await crawl(
       {
         url: startUrl,
